@@ -5,6 +5,7 @@ import Layout from "../Layout/Layout";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import React from "react";
 import Button from "../Components/Button";
+import Comment from "../Components/Comment";
 function DetailPage() {
   const navigate = useNavigate();
   return (
@@ -20,7 +21,7 @@ function DetailPage() {
         </button>
         <div className=" w-full flex flex-col justify-center items-center lg:flex-row  lg:justify-between lg:items-start lg:gap-5 ">
           {/* Image section */}
-          <div className="lg:w-3/6 ">
+          <div className="lg:w-3/6">
             <div className=" rounded-lg flex justify-center items-center  ">
               <TransformWrapper>
                 {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
@@ -85,8 +86,8 @@ function DetailPage() {
               </div>
               <div className="flex flex-wrap justify-between items-center w-full">
                 <span className=" text-xs font-medium ">ویژگی های دیگر </span>
-                <span className=" font-semibold text-xs text-primary-300">
-                  ننللللللللللللللللللللللللللللللللللللللللللللللللللللللللل
+                <span className=" font-semibold text-xs text-primary-300 ">
+                  ننfffllلللللللللللللللللل
                 </span>
               </div>
             </div>
@@ -115,7 +116,10 @@ function DetailPage() {
               20
             </span>
           </div>
-          <div className="flex flex-col gap-y-6 ">{/* Comments */}</div>
+          <div className="flex flex-col gap-y-6 ">
+            {/* Comments */}
+            <Comment />
+          </div>
         </div>
       </section>
     </Layout>
