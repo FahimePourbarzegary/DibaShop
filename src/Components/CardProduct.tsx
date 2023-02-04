@@ -2,6 +2,7 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Button from "./Button";
 
 function CardProduct() {
   const [favoriteSign, setFavoriteSign] = useState(false);
@@ -46,9 +47,7 @@ function CardProduct() {
             </div>
           </div>
           <Link to={`/DetailPage/1`}>
-            <button className=" bg-primary-400 w-full text-dark py-3 px-10 text-cente font-semibold text-base hover:animate-pulse rounded">
-              خرید
-            </button>
+            <Button title="خرید" />
           </Link>
         </div>
       </div>

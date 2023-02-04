@@ -1,11 +1,13 @@
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CardProduct from "../Components/CardProduct";
+import Carousel from "../Components/Carousel";
 import Category from "../Components/Category";
 import Layout from "../Layout/Layout";
 function HomePage() {
   return (
     <Layout>
+      <Carousel />
       {/* Categories Box */}
       <section className="py-4">
         <div className="w-full  px-8 mb-4 flex justify-between items-center">
@@ -113,8 +115,8 @@ function HomePage() {
                   <FontAwesomeIcon icon={faHeart} />
                 </button>
                 <span className=""> 26 فروردین </span>
-              </div> 
-              
+              </div>
+
               <div className="flex flex-col justify-between gap-4 md:items-start w-full">
                 <h1 className="p-4 font-vazirBold text-3xl">تیتر</h1>
                 <article className=" text-sm md:px-7 md:text-start">
