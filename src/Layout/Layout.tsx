@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import Carousel from "../Components/Carousel";
 import Footer from "../Components/Footer";
 import { Navbar } from "../Components/Navbar";
 type LayoutProps = {
@@ -11,7 +10,6 @@ function Layout({ children }: LayoutProps) {
       <header className="flex flex-col py-4 px-6 md:px-8 ">
         <Navbar />
       </header>
-      <Carousel />
       <main className=" px-4">{children}</main>
       <footer>
         <Footer />
