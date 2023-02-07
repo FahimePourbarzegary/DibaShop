@@ -76,7 +76,7 @@ export const Navbar = () => {
             </div>
           </li>
           <li className="p-1 py-2 mb-2 md:mx-2 md:mb-0 hover:bg-primary-200 hover:text-dark rounded-lg md:px-4 md:py-2  transition-all  text-sm">
-            <NavLink to="/" className="w-full block ">
+            <NavLink to="/blogs" className="w-full block ">
               وبلاگ
             </NavLink>
           </li>
