@@ -87,7 +87,7 @@ export const Navbar = () => {
           </li>
           <li className="p-1 py-2  md:mx-2 md:mb-0 bg-primary-200 text-dark rounded-lg md:px-4 md:py-2  transition-all font-semibold text-sm">
             <NavLink
-              to="/"
+              to="/Register"
               className="w-full  
               flex justify-center items-center"
             >
