@@ -18,7 +18,6 @@ module.exports = {
       },
       gray: {
         100: "#C3D4E9",
-        200: "#Car",
         300: "#596780",
       },
       warning: "#FF0F0F",

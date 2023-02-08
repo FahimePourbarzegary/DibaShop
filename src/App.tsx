@@ -3,6 +3,7 @@ import AboutUsPage from "./Pages/AboutUsPage";
 import BlogDetailPage from "./Pages/BlogDetailPage";
 import BlogsPage from "./Pages/BlogsPage";
 import DetailPage from "./Pages/DetailPage";
+import FilterPage from "./Pages/FilterPage";
 import HomePage from "./Pages/HomePage";
 import LoginPage from "./Pages/LoginPage";
 import PaymentPage from "./Pages/PaymentPage";
@@ -18,6 +19,7 @@ function App() {
       <Route path="/Payment" element={<PaymentPage />} />
       <Route path="/Register" element={<RegisterPage />} />
       <Route path="/Login" element={<LoginPage />} />
+      <Route path="/Filter" element={<FilterPage />} />
     </Routes>
   );
 }

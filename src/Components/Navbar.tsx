@@ -1,9 +1,14 @@
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faFilter,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 export const Navbar = () => {
   const [humbergNav, setHumbergNav] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [dropdownCate, setDropdownCate] = useState<string>(
     "overflow-hidden max-h-0 opacity-0"
   );
@@ -17,8 +22,30 @@ export const Navbar = () => {
       <div className=" font-vazirBold rounded-full  w-20 h-8   bg-primary-300 text-dark flex justify-center items-center text-xl">
         دیبا
       </div>
+      {/* SearchBar section */}
+      <div className=" w-full lg:w-1/4 border  flex justify-between px-6 py-1 rounded-2xl items-center  col-span-2  order-2 lg:order-1 md:col-span-2 md:rounded-3xl self-center md:mt-0 ">
+        <Link to="/Filter" /*state={{ productName: searchValue }}*/>
+          {" "}
+          <FontAwesomeIcon icon={faFilter} className="cursor-pointer " />
+        </Link>
+        <input
+          type="search"
+          name="search"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value.trim())}
+          className=" w-full  px-3 text-xs py-3 bg-dark focus:outline-none"
+          placeholder="چیزی را جستجو کنید..."
+        />
+        <Link to="/Filter" /*state={{ productName: searchValue }}*/>
+          {" "}
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            className="cursor-pointer"
+          />
+        </Link>
+      </div>
+      {/*subnav dection */}
       <div className="transition-all duration-300 ">
-        {/*subnav dection */}
         <button
           className=" hover:opacity-50 transition-all duration-300 border border-primary-200 rounded-lg flex justify-center items-center md:hidden "
           onClick={handleClickSubNav}
@@ -32,7 +59,7 @@ export const Navbar = () => {
           humbergNav
             ? " max-h-screen opacity-100"
             : " overflow-hidden max-h-0 opacity-0"
-        }  md:max-h-screen md:opacity-100 rounded md:w-auto  duration-500 ease-in-out `}
+        }  md:max-h-screen md:opacity-100 rounded md:w-auto  duration-500 ease-in-out order-1 lg:order-2 `}
       >
         <ul className="p-2 text-sm flex flex-col md:flex-row duration-500">
           <li className="p-1 py-2 mb-2 md:mx-2  md:mb-0 hover:bg-primary-200 hover:text-dark rounded-lg md:px-4 md:py-2  transition-all text-sm">
