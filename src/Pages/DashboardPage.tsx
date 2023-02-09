@@ -11,6 +11,7 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import CartPage from "./CartPage";
 import FavoritePage from "./FavoritePage";
+import NewsPage from "./NewsPage";
 import UserInfoPage from "./UserInfoPage";
 function DashboardPage() {
   return (
@@ -82,7 +83,7 @@ function DashboardPage() {
         <Routes>
           <Route path="userInfo" element={<UserInfoPage />} />
           <Route path="favorites" element={<FavoritePage />} />
-          <Route path="newsuser" element={<div>newsuser</div>} />
+          <Route path="newsuser" element={<NewsPage/>} />
           <Route path="usercart" element={<CartPage />} />
         </Routes>
       </section>
