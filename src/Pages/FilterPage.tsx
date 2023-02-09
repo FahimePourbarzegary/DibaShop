@@ -228,7 +228,7 @@ function FilterPage() {
           </div>
         </div>
         {/**Shows product */}
-        <section className="py-4">
+        <section className="py-4 w-full">
           <div
             className=" w-full p-6 grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-3"

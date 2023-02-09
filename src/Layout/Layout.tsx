@@ -10,7 +10,7 @@ function Layout({ children }: LayoutProps) {
       <header className="flex flex-col py-4 px-6 md:px-8 ">
         <Navbar />
       </header>
-      <main className=" px-4">{children}</main>
+      <main>{children}</main>
       <footer>
         <Footer />
       </footer>
