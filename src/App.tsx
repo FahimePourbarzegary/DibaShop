@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import AboutUsPage from "./Pages/AboutUsPage";
 import BlogDetailPage from "./Pages/BlogDetailPage";
 import BlogsPage from "./Pages/BlogsPage";
+import DashboardPage from "./Pages/DashboardPage";
 import DetailPage from "./Pages/DetailPage";
 import FilterPage from "./Pages/FilterPage";
 import HomePage from "./Pages/HomePage";
@@ -20,6 +21,7 @@ function App() {
       <Route path="/Register" element={<RegisterPage />} />
       <Route path="/Login" element={<LoginPage />} />
       <Route path="/Filter" element={<FilterPage />} />
+      <Route path="/Dashboard/*" element={<DashboardPage />} />
     </Routes>
   );
 }
