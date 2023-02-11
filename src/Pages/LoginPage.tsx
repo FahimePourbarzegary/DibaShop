@@ -39,25 +39,24 @@ function LoginPage() {
   return (
     <div className=" md:h-screen flex justify-center items-center ">
       <form
-        className=" flex flex-col justify-center items-center py-2 px-4 md:px-10 md:py-8 gap-4  border rounded-xl bg-slate-900 my-10"
+        className="flex flex-col justify-center items-center py-2 px-4 md:px-10 md:py-8 gap-4  border rounded-xl bg-slate-900"
         onSubmit={formik.handleSubmit}
       >
         {/*Error box */}
         <div
-          className={`bg-warning w-full p-2  rounded-lg  transition-all text-sm ${
+          className={` bg-warning w-full text-sm rounded-lg  ${
             Object.keys(formik.errors).length ? "block" : "hidden"
           }`}
         >
-          ارورها:
           <ul>
             <li>
               {formik.touched.email && formik.errors.email && (
-                <div>{formik.errors.email}</div>
+                <div className="p-2">{formik.errors.email}</div>
               )}
             </li>
             <li>
               {formik.touched.password && formik.errors.password && (
-                <div>{formik.errors.password}</div>
+                <div className="p-2">{formik.errors.password}</div>
               )}
             </li>
           </ul>
@@ -66,13 +65,13 @@ function LoginPage() {
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col">
             {" "}
-            <label htmlFor="email">ایمیل :</label>
+            <label htmlFor="email">ایمیل یا نام کاربری :</label>
             <input
               type="email"
               {...formik.getFieldProps("email")}
               id="email"
               className="mt-3 p-3 rounded-xl bg-slate-800 text-slate-400  focus:outline-none focus:ring focus:ring-primary-200"
-              placeholder="ایمیل"
+              placeholder="ایمیل یا نام کاربری"
             />
           </div>
           <div className="flex flex-col">

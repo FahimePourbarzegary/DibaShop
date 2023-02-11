@@ -1,9 +1,11 @@
 import { useFormik } from "formik";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 type initialValuesType = {
   name: string;
   lastName: string;
+  userName: string;
   email: string;
   address: string;
   password: string;
@@ -14,18 +16,20 @@ function RegisterPage() {
   let initialValues: initialValuesType = {
     name: "",
     lastName: "",
+    userName: "",
     email: "",
     address: "",
     password: "",
     confirmPassword: "",
   };
-  // send values and register
-  const onSubmit = (values: initialValuesType) => {
-    console.log(values);
-    console.log(formik.values);
-  };
+
   //for validation inputs
   const validationSchema = yup.object({
+    userName: yup
+      .string()
+      .max(15, " نام کاربری باید حداکثر 15 و حداقل 3 کارکتر باشد.")
+      .min(3, " نام کاربری باید حداکثر 15 و حداقل 3 کارکتر باشد.")
+      .required("نام کاربری را وارد کنید"),
     name: yup
       .string()
       .max(15, " نام باید حداکثر 15 و حداقل 3 کارکتر باشد.")
@@ -51,63 +55,83 @@ function RegisterPage() {
       .oneOf([yup.ref("password"), null], "تکرار رمز با رمز مقایرت دارد")
       .required("تکرار رمز را وارد کنید"),
   });
+  // send values and register
+  const onSubmit = (values: initialValuesType) => {
+    console.log(values);
+    console.log(formik.values);
+  };
   //*******************/
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
   });
-  //*******************/
 
   return (
-    <div className=" md:h-screen flex justify-center items-center ">
+    <div className="my-8 flex justify-center items-center ">
       <form
-        className=" flex flex-col justify-center items-center py-2 px-4 md:px-10 md:py-8 gap-4  border rounded-xl bg-slate-900 my-10"
+        className=" flex flex-col justify-center items-center py-2 px-4 md:px-10 md:py-8 gap-4  border rounded-xl bg-slate-900"
         onSubmit={formik.handleSubmit}
       >
         {/*Error box */}
         <div
-          className={`bg-warning w-full p-2  rounded-lg  transition-all text-sm ${
+          className={` bg-warning w-full text-sm rounded-lg  ${
             Object.keys(formik.errors).length ? "block" : "hidden"
           }`}
         >
-          ارورها:
           <ul>
             <li>
+              {formik.touched.userName && formik.errors.userName && (
+                <div className="p-2">{formik.errors.userName}</div>
+              )}
+            </li>
+            <li>
               {formik.touched.name && formik.errors.name && (
-                <div>{formik.errors.name}</div>
+                <div className="p-2">{formik.errors.name}</div>
               )}
             </li>
             <li>
               {formik.touched.lastName && formik.errors.lastName && (
-                <div>{formik.errors.lastName}</div>
+                <div className="p-2">{formik.errors.lastName}</div>
               )}
             </li>
             <li>
               {formik.touched.email && formik.errors.email && (
-                <div>{formik.errors.email}</div>
+                <div className="p-2">{formik.errors.email}</div>
               )}
             </li>
             <li>
               {formik.touched.address && formik.errors.address && (
-                <div>{formik.errors.address}</div>
+                <div className="p-2">{formik.errors.address}</div>
               )}
             </li>
             <li>
               {formik.touched.password && formik.errors.password && (
-                <div>{formik.errors.password}</div>
+                <div className="p-2">{formik.errors.password}</div>
               )}
             </li>
+
             <li>
               {formik.touched.confirmPassword &&
                 formik.errors.confirmPassword && (
-                  <div>{formik.errors.confirmPassword}</div>
+                  <div className="p-2">{formik.errors.confirmPassword}</div>
                 )}
             </li>
           </ul>
         </div>
         {/*fotm inputs box */}
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            {" "}
+            <label htmlFor="userName">نام کاربری :</label>
+            <input
+              type="text"
+              id="userName"
+              {...formik.getFieldProps("userName")}
+              className="mt-3 p-3 rounded-xl bg-slate-800 text-slate-400  focus:outline-none focus:ring focus:ring-primary-200"
+              placeholder="نام کاربری"
+            />
+          </div>
           <div className="flex flex-col">
             {" "}
             <label htmlFor="name">نام :</label>
