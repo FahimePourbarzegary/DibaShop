@@ -1,13 +1,28 @@
 import { faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../Components/Button";
 import Comment from "../Components/Comment";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { RootState } from "../services/store";
+import { fetchProductById } from "../services/features/productSlice";
 function DetailPage() {
   const navigate = useNavigate();
+  const { errorProducts, loadingProducts, product } = useAppSelector(
+    (state: RootState) => state.products
+  );
+  const dispatch = useAppDispatch();
+  const { id } = useParams();
+  useEffect(() => {
+    dispatch(fetchProductById(id));
+  }, []);
+  console.log(product);
+
+  if (errorProducts) return <div>error</div>;
+  if (loadingProducts) return <div>loadingProducts</div>;
   return (
     <Layout>
       <section className=" p-6 flex flex-col justify-evenly items-center my-3">
@@ -48,7 +63,7 @@ function DetailPage() {
                     </div>
                     <TransformComponent>
                       <img
-                        src="https://s2.uupload.ir/files/anghoshtaresezar_9odt.jpg"
+                        src={product[0]?.image}
                         alt="test"
                         className=" rounded-lg flex justify-center items-center h-[270px] w-80 m-5"
                       />
@@ -62,43 +77,45 @@ function DetailPage() {
           <div className=" w-full  bg-dark rounded-lg p-4 flex flex-col gap-y-4 justify-evenly lg:w-3/6 border ">
             <div>
               {" "}
-              <span>اسم</span>
+              <span>{product[0]?.name}</span>
             </div>
             <span className=" text-xs font-normal ">توضیحات</span>
-            <span className=" text-sm">
-              لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با
-              استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله
-              در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد
-              نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد،
-              کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان
-              جامعه و متخصصان را می طلبد.
-            </span>
+            <span className=" text-sm">{product[0]?.detail}</span>
             <div className=" grid grid-cols-2 gap-2 gap-x-4 w-full lg:px-12">
               <div className="flex flex-wrap justify-between items-center w-full">
                 <span className=" text-xs font-medium ">جنس</span>
-                <span className=" font-semibold text-xs ">جنس جواهر</span>
-              </div>
-              <div className="flex flex-wrap justify-between items-center w-full">
-                <span className=" text-xs font-medium "> ابعاد </span>
-                <span className=" font-semibold text-xs text-primary-300">
-                  13*2
+                <span className=" font-semibold text-xs ">
+                  {" "}
+                  {product[0]?.material}
                 </span>
               </div>
-              <div className="flex flex-wrap justify-between items-center w-full">
-                <span className=" text-xs font-medium ">ویژگی های دیگر </span>
-                <span className=" font-semibold text-xs text-primary-300 ">
-                  ننfffllلللللللللللللللللل
-                </span>
-              </div>
+              {product[0]?.properties.map((property) => {
+                return (
+                  <div className="flex flex-wrap justify-between items-center w-full">
+                    <span className=" text-xs font-medium ">
+                      {" "}
+                      {property.title}{" "}
+                    </span>
+                    <span className=" font-semibold text-xs text-primary-300">
+                      {property.property}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
             <div className="flex justify-between items-center">
               <div>
-                <div className="flex font-bold text-primary-300">
-                  <p>522222</p>
+                <div className="flex font-bold text-yellow-300">
+                  <p>
+                    {product[0]?.off
+                      ? product[0]?.price -
+                        product[0]?.price * (product[0]?.off / 100)
+                      : product[0]?.price}
+                  </p>
                   <p className="px-1">تومان </p>
                 </div>
-                <div>
-                  <p className=" line-through">10000</p>
+                <div className={product[0]?.off ? "" : "hidden"}>
+                  <p className=" line-through">{product[0]?.price}</p>
                 </div>
               </div>
 

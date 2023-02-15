@@ -2,9 +2,10 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ProductType } from "../services/features/productSlice";
 import Button from "./Button";
 
-function CardProduct() {
+function CardProduct({ id, name, price, off, image, material }: ProductType) {
   const [favoriteSign, setFavoriteSign] = useState(false);
   return (
     <div className="flex justify-center items-center">
@@ -13,9 +14,11 @@ function CardProduct() {
         <div className="flex justify-between items-center">
           <div>
             <p className=" font-semibold text-base text-yellow-300 md:text-xl md:font-bold">
-              اسم
+              {name}
             </p>
-            <p className="font-medium text-xs md:text-sm md:font-bold">جنس</p>
+            <p className="font-medium text-xs md:text-sm md:font-bold">
+              {material}
+            </p>
           </div>
           <div>
             <button>
@@ -27,26 +30,24 @@ function CardProduct() {
           </div>
         </div>
         {/*image  section */}
-        <div className="w-full flex justify-center items-center">
-          <img
-            src="https://s2.uupload.ir/files/anghoshtaresezar_9odt.jpg"
-            alt="product_image"
-            className=" h-52"
-          />
-        </div>
+        <Link to={`/DetailPage/${id}`}>
+          <div className="w-full flex justify-center items-center">
+            <img src={image} alt="product_image" className=" h-52" />
+          </div>
+        </Link>
 
         {/*footer  section */}
         <div className="flex justify-between items-center">
           <div>
             <div className="flex font-bold text-yellow-300">
-              <p>100000</p>
+              <p>{off ? price - price * (off / 100) : price}</p>
               <p className="px-1">تومان </p>
             </div>
-            <div className={1 ? "" : "hidden"}>
-              <p className=" line-through">10000</p>
+            <div className={off ? "" : "hidden"}>
+              <p className=" line-through">{price}</p>
             </div>
           </div>
-          <Link to={`/DetailPage/1`}>
+          <Link to={`/DetailPage/${id}`}>
             <Button title="خرید" />
           </Link>
         </div>

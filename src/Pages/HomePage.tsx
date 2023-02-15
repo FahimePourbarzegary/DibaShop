@@ -1,10 +1,21 @@
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect } from "react";
 import CardProduct from "../Components/CardProduct";
 import Carousel from "../Components/Carousel";
 import Category from "../Components/Category";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import Layout from "../Layout/Layout";
+import { fetchProducts } from "../services/features/productSlice";
+import { RootState } from "../services/store";
 function HomePage() {
+  const { errorProducts, loadingProducts, products } = useAppSelector(
+    (state: RootState) => state.products
+  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, []);
   return (
     <Layout>
       <Carousel />
@@ -42,20 +53,13 @@ function HomePage() {
           className=" grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-4"
         >
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
-          <CardProduct />
+          {!errorProducts ? (
+            products.map((product) => {
+              return <CardProduct {...product} />;
+            })
+          ) : (
+            <div>بارگذاری با مشکل رو به رو شده</div>
+          )}
         </section>
       </section>
       {/* Preview Bloges Box */}
