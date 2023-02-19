@@ -1,21 +1,42 @@
 import {
   faBars,
+  faBell,
   faFilter,
+  faGear,
+  faHeart,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { autoLogin } from "../services/features/userSlice";
+import { RootState } from "../services/store";
 export const Navbar = () => {
   const [humbergNav, setHumbergNav] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>("");
   const [dropdownCate, setDropdownCate] = useState<string>(
     "overflow-hidden max-h-0 opacity-0"
   );
+  const { user, loggedIn, error } = useAppSelector(
+    (state: RootState) => state.users
+  );
+  const [isUser, setIsUser] = useState<boolean>(false);
   //toggle subnav
   const handleClickSubNav = () => {
     setHumbergNav(!humbergNav);
   };
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(autoLogin());
+  }, []);
+  useEffect(() => {
+    if (loggedIn) setIsUser(true);
+    else setIsUser(false);
+  }, [user]);
+ 
+
   return (
     <nav className=" flex justify-between items-center flex-wrap ">
       {/*Logo section */}
@@ -112,14 +133,52 @@ export const Navbar = () => {
               درباره ما
             </NavLink>
           </li>
-          <li className="p-1 py-2  md:mx-2 md:mb-0 bg-primary-200 text-dark rounded-lg md:px-4 md:py-2  transition-all font-semibold text-sm">
-            <NavLink
-              to="/Register"
-              className="w-full  
-              flex justify-center items-center"
+          <li>
+            <div
+              className="order-1 md:order-2  items-center flex w-full justify-end
+       md:items-center md:justify-evenly h-full"
             >
-              ثبت نام / ورود
-            </NavLink>
+              {user ? (
+                <div className="flex w-full justify-between gap-3">
+                  <Link to="/Dashboard/newsuser">
+                    <div className=" w-7 h-7 rounded-full  flex items-center justify-center  border-2  border-solid md:visible relative">
+                      <FontAwesomeIcon icon={faBell} />
+                      <div className=" w-2 h-2 bg-red-600 rounded-full absolute top-0 right-0 "></div>
+                    </div>
+                  </Link>
+                  <Link to="/Dashboard/favorites">
+                    <div className="w-7 h-7 rounded-full  flex items-center justify-center border-2  border-solid md:visible relative">
+                      <FontAwesomeIcon icon={faHeart} />
+                      <div className=" w-2 h-2 bg-red-600 rounded-full absolute top-0 right-0 "></div>
+                    </div>
+                  </Link>
+                  <Link to="/Dashboard/userInfo">
+                    <div className="w-7 h-7 rounded-full  flex items-center justify-center border-2  border-solid md:visible relative">
+                      <FontAwesomeIcon icon={faGear} />
+                      <div className=" w-2 h-2 bg-red-600 rounded-full absolute top-0 right-0 "></div>
+                    </div>
+                  </Link>
+                  <Link to="/Dashboard/userInfo">
+                    <div className=" w-7 h-7 rounded-full">
+                      <img
+                        src="https://api.dicebear.com/5.x/adventurer-neutral/svg?seed=Aneka"
+                        alt="user-image"
+                        aria-hidden
+                        className=" w-full h-7 h-autoshadow rounded-full max-w-ful align-middle border-none object-cover object-fit "
+                      />
+                    </div>{" "}
+                  </Link>
+                </div>
+              ) : (
+                <NavLink
+                  to="/Register"
+                  className="w-full  
+              flex justify-center items-center  p-1 py-2  md:mx-2 md:mb-0 bg-primary-200 text-dark rounded-lg md:px-4 md:py-2  transition-all font-semibold text-sm"
+                >
+                  ثبت نام / ورود
+                </NavLink>
+              )}
+            </div>
           </li>
         </ul>
       </div>
