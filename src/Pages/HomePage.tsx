@@ -10,6 +10,7 @@ import { fetchProducts } from "../services/features/productSlice";
 import { fetchBlog } from "../services/features/blogSlice";
 import { RootState } from "../services/store";
 import { Link } from "react-router-dom";
+import { autoLogin } from "../services/features/userSlice";
 function HomePage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
@@ -19,9 +20,11 @@ function HomePage() {
   );
   const dispatch = useAppDispatch();
   useEffect(() => {
+    dispatch(autoLogin());
     dispatch(fetchProducts());
     dispatch(fetchBlog());
   }, []);
+
   return (
     <Layout>
       <Carousel />
