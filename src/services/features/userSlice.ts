@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import http from "../httpService";
 //Create AsyncTunk
 export const RegisterUser = createAsyncThunk(
   "user/Register",
   async (userInfo: UserType, { rejectWithValue }) => {
     try {
       //get users and check username and email
-      const response = await axios.get(`http://localhost:3000/users`);
+      const response = await http.get(`users`);
       const users = response.data;
       const filteredUser = users.filter(
         (user: UserType) =>
@@ -14,10 +14,7 @@ export const RegisterUser = createAsyncThunk(
       );
       //if dosent exist same username or email register if not send null
       if (!filteredUser.length) {
-        const { data } = await axios.post(
-          `http://localhost:3000/users`,
-          userInfo
-        );
+        const { data } = await http.post(`users`, userInfo);
         localStorage.setItem("AuthLogin", JSON.stringify(data));
         return data;
       } else {
@@ -37,7 +34,7 @@ export const LoginUser = createAsyncThunk(
   async (Login: LoginType, { rejectWithValue }) => {
     try {
       //get users and check user to login
-      const response = await axios.get(`http://localhost:3000/users`);
+      const response = await http.get(`users`);
       const users = response.data;
       const filteredUser = users.filter(
         (user: UserType) =>

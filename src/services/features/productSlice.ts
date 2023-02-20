@@ -1,12 +1,12 @@
-import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import http from "../httpService";
 //types & initialvalues
 export type ProductType = {
   id: number;
   name: string;
   price: number;
   off: number;
-  image : string;
+  image: string;
   detail: string;
   category: number;
   properties: { title: string; property: string }[];
@@ -17,21 +17,21 @@ export interface ProductState {
   loadingProducts: boolean;
   errorProducts: any;
   products: ProductType[];
-  product:ProductType[] ;
+  product: ProductType[];
 }
 
 const initialState: ProductState = {
   loadingProducts: false,
   errorProducts: null,
   products: [],
-  product:[]
+  product: [],
 };
 //Create AsyncTunk
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/products`);
+      const response = await http.get(`products`);
       return response.data;
     } catch ({ message }) {
       return rejectWithValue(message);
@@ -40,9 +40,9 @@ export const fetchProducts = createAsyncThunk(
 );
 export const fetchProductById = createAsyncThunk(
   "products/fetchProductById",
-  async (id:string | undefined, { rejectWithValue }) => {
+  async (id: string | undefined, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/products/${id}`);
+      const response = await http.get(`products/${id}`);
       console.log(response);
       return response.data;
     } catch ({ message }) {
@@ -54,10 +54,10 @@ export const decrementInventory = createAsyncThunk(
   "products/decrementInventory",
   async (productInfo: ProductType, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `http://localhost:3000/products/${productInfo.id}`,
-        { ...productInfo, inventory: productInfo.inventory - 1 }
-      );
+      const response = await http.put(`products/${productInfo.id}`, {
+        ...productInfo,
+        inventory: productInfo.inventory - 1,
+      });
       return response.data;
     } catch ({ message }) {
       return rejectWithValue(message);
@@ -104,7 +104,7 @@ export const productSlice = createSlice({
       return {
         ...state,
         loadingProducts: false,
-        product:[],
+        product: [],
         errorProducts: action.payload,
       };
     });
@@ -117,7 +117,8 @@ export const productSlice = createSlice({
             }
           : product
       );
-      return {...state,
+      return {
+        ...state,
         loadingProducts: false,
         errorProducts: "",
         products: filteredProduct,

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import http from "../httpService";
 //types & initialvalues
 export type blogType = {
   id: number;
@@ -25,7 +25,7 @@ export const fetchBlog = createAsyncThunk(
   "blog/fetchBlog",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/blogs`);
+      const response = await http.get(`blogs`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error);
