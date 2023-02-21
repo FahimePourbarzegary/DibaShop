@@ -5,6 +5,7 @@ import {
   faGear,
   faHeart,
   faMagnifyingGlass,
+  faShoppingBag,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -35,7 +36,6 @@ export const Navbar = () => {
     if (loggedIn) setIsUser(true);
     else setIsUser(false);
   }, [user]);
- 
 
   return (
     <nav className=" flex justify-between items-center flex-wrap ">
@@ -134,6 +134,7 @@ export const Navbar = () => {
             </NavLink>
           </li>
           <li>
+            {/* login register section*/}
             <div
               className="order-1 md:order-2  items-center flex w-full justify-end
        md:items-center md:justify-evenly h-full"
@@ -149,13 +150,11 @@ export const Navbar = () => {
                   <Link to="/Dashboard/favorites">
                     <div className="w-7 h-7 rounded-full  flex items-center justify-center border-2  border-solid md:visible relative">
                       <FontAwesomeIcon icon={faHeart} />
-                      <div className=" w-2 h-2 bg-red-600 rounded-full absolute top-0 right-0 "></div>
                     </div>
                   </Link>
-                  <Link to="/Dashboard/userInfo">
+                  <Link to="/Dashboard/usercart">
                     <div className="w-7 h-7 rounded-full  flex items-center justify-center border-2  border-solid md:visible relative">
-                      <FontAwesomeIcon icon={faGear} />
-                      <div className=" w-2 h-2 bg-red-600 rounded-full absolute top-0 right-0 "></div>
+                      <FontAwesomeIcon icon={faShoppingBag} />
                     </div>
                   </Link>
                   <Link to="/Dashboard/userInfo">
