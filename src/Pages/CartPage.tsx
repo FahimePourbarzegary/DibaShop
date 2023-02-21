@@ -36,21 +36,27 @@ function CartPage() {
           })}
         </div>
         {/*button */}
-        <div className="p-1 py-2  md:mx-2 md:mb-0 bg-primary-200 text-dark rounded-lg md:px-4 md:py-2  transition-all font-semibold text-sm">
-          <Link
-            to="/Payment"
-            state={{ filterdAddToCart }}
-            className="w-full  
+        {filterdAddToCart.length ? (
+          <div className="p-1 py-2  md:mx-2 md:mb-0 bg-primary-200 text-dark rounded-lg md:px-4 md:py-2  transition-all font-semibold text-sm">
+            <Link
+              to="/Payment"
+              state={{ filterdAddToCart }}
+              className="w-full  
               flex justify-center items-center"
-          >
-            خرید نهایی
-          </Link>
-        </div>
+            >
+              خرید نهایی
+            </Link>
+          </div>
+        ) : (
+          <div className="pr-8  md:pr-18 font-semibold text-slate-600 text-base md:text-xl">
+            در حال حاضر کالای جدیدی اضافه نشده است
+          </div>
+        )}
       </div>
       {/* Buy Product Type */}
       <div>
         <p className=" pr-8  md:pr-18 font-semibold text-slate-600 text-base md:text-xl">
-          خریداری شده
+          خرید های گذشته
         </p>
         <div
           className="p-6 grid gap-5
