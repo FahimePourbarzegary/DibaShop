@@ -1,6 +1,6 @@
 import { faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import React, { useEffect } from "react";
@@ -9,20 +9,48 @@ import Comment from "../Components/Comment";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { RootState } from "../services/store";
 import { fetchProductById } from "../services/features/productSlice";
+import { addToCart } from "../services/features/cartSlider";
+import toast from "react-hot-toast";
 function DetailPage() {
   const navigate = useNavigate();
   const { errorProducts, loadingProducts, product } = useAppSelector(
     (state: RootState) => state.products
+  );
+  const { user, loggedIn, error } = useAppSelector(
+    (state: RootState) => state.users
   );
   const dispatch = useAppDispatch();
   const { id } = useParams();
   useEffect(() => {
     dispatch(fetchProductById(id));
   }, []);
-  console.log(product);
-
+  const addToCartHandler = async () => {
+    const { id, name, price, off, image, detail, category } = product[0];
+    if (user) {
+      await dispatch(
+        addToCart({
+          id: new Date().getTime(),
+          productId: id,
+          userId: user.id,
+          name,
+          price,
+          off,
+          image,
+          detail,
+          category,
+          quantity: 1,
+          situation: "ADD_TO_CART",
+        })
+      );
+      toast.success(" به سبد خرید اضافه شد");
+    } else {
+      toast.error(" ابتدا وارد حساب شوید");
+    }
+  };
   if (errorProducts) return <div>error</div>;
   if (loadingProducts) return <div>loadingProducts</div>;
+  console.log(product);
+
   return (
     <Layout>
       <section className=" p-6 flex flex-col justify-evenly items-center my-3">
@@ -89,9 +117,12 @@ function DetailPage() {
                   {product[0]?.material}
                 </span>
               </div>
-              {product[0]?.properties.map((property) => {
+              {product[0]?.properties.map((property, index) => {
                 return (
-                  <div className="flex flex-wrap justify-between items-center w-full">
+                  <div
+                    className="flex flex-wrap justify-between items-center w-full"
+                    key={index}
+                  >
                     <span className=" text-xs font-medium ">
                       {" "}
                       {property.title}{" "}
@@ -119,9 +150,13 @@ function DetailPage() {
                 </div>
               </div>
 
-              <Link to="/">
-                <Button title="خرید" />
-              </Link>
+              {product[0]?.inventory ? (
+                <div onClick={addToCartHandler}>
+                  <Button title="خرید" />
+                </div>
+              ) : (
+                <div>نا موجود</div>
+              )}
             </div>
           </div>
         </div>

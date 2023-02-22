@@ -14,8 +14,9 @@ function CartPage() {
   }, []);
   console.log(cart);
   const filterdAddToCart = cart?.filter(
-    (cart) => cart.situation === "Add_TO_CART"
+    (cart) => cart.situation === "ADD_TO_CART"
   );
+  if (errorCart) return <div>{errorCart}</div>;
   return (
     <section className="py-4 w-full ">
       {/* Add Product Type */}
@@ -30,8 +31,11 @@ function CartPage() {
         >
           {/* need ADD  */}
           {cart?.map((cart) => {
-            if (cart.situation === "Add_TO_CART") {
+            if (cart.situation === "ADD_TO_CART") {
               return <CardCartProduct key={cart.id} {...cart} />;
+            }
+            {
+              loadingCart ? <div>در حا بارگذاری</div> : null;
             }
           })}
         </div>
@@ -68,6 +72,7 @@ function CartPage() {
               return <CardCartProduct key={cart.id} {...cart} />;
             }
           })}
+          {loadingCart ? <div>در حا بارگذاری</div> : null}
         </div>
       </div>
     </section>
