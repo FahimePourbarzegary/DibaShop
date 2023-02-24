@@ -18,11 +18,13 @@ export interface CartState {
   loadingCart: boolean;
   errorCart: any;
   cart: CartType[];
+  cartById: CartType[] | null;
 }
 const initialState: CartState = {
   loadingCart: false,
   errorCart: null,
   cart: [],
+  cartById: null,
 };
 //Create AsyncTunk
 export const fetchCartByUserId = createAsyncThunk(
@@ -37,6 +39,17 @@ export const fetchCartByUserId = createAsyncThunk(
       } else {
         return null;
       }
+    } catch ({ message }) {
+      return rejectWithValue(message);
+    }
+  }
+);
+export const fetchCartById = createAsyncThunk(
+  "cart/fetchCartById",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const response = await http.get(`cart/${id}`);
+      return response.data;
     } catch ({ message }) {
       return rejectWithValue(message);
     }
@@ -68,9 +81,34 @@ export const deleteFromCart = createAsyncThunk(
 );
 export const changeSituationCart = createAsyncThunk(
   "cart/changeSituationCart",
+  async (cart: CartType[], { rejectWithValue }) => {
+    let changestate = initialState.cart;
+    try {
+      cart.map(async (cart) => {
+        await http.put(`cart/${cart.id}`, {
+          ...cart,
+          situation: "BUY_PRODUCT",
+        });
+        changestate = changestate.map((productCart) =>
+          productCart.id === cart.id
+            ? { ...cart, situation: "BUY_PRODUCT" }
+            : productCart
+        );
+      });
+      return changestate;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const increamentCart = createAsyncThunk(
+  "cart/increamentCart",
   async (cart: CartType, { rejectWithValue }) => {
     try {
-      const response = await http.put(`cart/${cart.id}`, cart);
+      const response = await http.put(`cart/${cart.id}`, {
+        ...cart,
+        quantity: cart.quantity + 1,
+      });
       console.log(response);
       return response.data;
     } catch (error) {
@@ -78,7 +116,21 @@ export const changeSituationCart = createAsyncThunk(
     }
   }
 );
-
+export const decreamentCart = createAsyncThunk(
+  "cart/decreamentCart",
+  async (cart: CartType, { rejectWithValue }) => {
+    try {
+      const response = await http.put(`cart/${cart.id}`, {
+        ...cart,
+        quantity: cart.quantity - 1,
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 //Slice
 export const cartSlice = createSlice({
   name: "cart",
@@ -101,6 +153,27 @@ export const cartSlice = createSlice({
         ...state,
         loadingCart: false,
         cart: [],
+        errorCart: action.payload,
+      };
+    });
+    builder.addCase(fetchCartById.pending, (state, action) => {
+      return { ...state, loadingCart: true };
+    });
+    builder.addCase(fetchCartById.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loadingCart: false,
+        cartById: state.cartById
+          ? [...state.cartById, action.payload]
+          : [action.payload],
+        errorCart: null,
+      };
+    });
+    builder.addCase(fetchCartById.rejected, (state, action) => {
+      return {
+        ...state,
+        loadingCart: false,
+        cartById: null,
         errorCart: action.payload,
       };
     });
@@ -127,10 +200,33 @@ export const cartSlice = createSlice({
         errorCart: null,
       };
     });
+    builder.addCase(changeSituationCart.pending, (state, action) => {
+      return {
+        ...state,
+        loadingCart: true,
+      };
+    });
     builder.addCase(changeSituationCart.fulfilled, (state, action) => {
-      const filteredCart = state.cart.map((product) =>
+      console.log("action", action);
+
+      return {
+        ...state,
+        loadingCart: false,
+        errorCart: null,
+      };
+    });
+    builder.addCase(changeSituationCart.rejected, (state, action) => {
+      return {
+        ...state,
+        loadingCart: false,
+        cart: [],
+        errorCart: action.payload,
+      };
+    });
+    builder.addCase(increamentCart.fulfilled, (state, action) => {
+      const filteredincrement = state.cart.map((product) =>
         product.id === action.payload.id
-          ? { ...product, situation: "BUY_PRODUCT" }
+          ? { ...action.payload, quantity: action.payload.quantity }
           : product
       );
 
@@ -139,7 +235,23 @@ export const cartSlice = createSlice({
       return {
         ...state,
         loadingCart: false,
-        cart: filteredCart,
+        cart: filteredincrement,
+        errorCart: null,
+      };
+    });
+    builder.addCase(decreamentCart.fulfilled, (state, action) => {
+      const filtereddecrement = state.cart.map((product) =>
+        product.id === action.payload.id
+          ? { ...action.payload, quantity: action.payload.quantity }
+          : product
+      );
+
+      console.log("action", action);
+
+      return {
+        ...state,
+        loadingCart: false,
+        cart: filtereddecrement,
         errorCart: null,
       };
     });

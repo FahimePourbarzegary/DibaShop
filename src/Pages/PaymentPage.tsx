@@ -1,27 +1,70 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../Components/Button";
-import { useAppDispatch } from "../hooks/hooks";
-import { CartType, changeSituationCart } from "../services/features/cartSlider";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import {
+  CartType,
+  changeSituationCart,
+  decreamentCart,
+  fetchCartByUserId,
+  increamentCart,
+  deleteFromCart,
+} from "../services/features/cartSlider";
+import { RootState } from "../services/store";
 
 function PaymentPage() {
-  const location = useLocation();
-  const { filterdAddToCart } = location.state;
-  let totalPrice = 0;
+  const { errorCart, loadingCart, cart } = useAppSelector(
+    (state: RootState) => state.carts
+  );
+  const filterdAddToCart = cart?.filter(
+    (cart) => cart.situation === "ADD_TO_CART"
+  );
+  //check rule
+  const [rule, setRule] = useState(false);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  useEffect(() => {
+    dispatch(fetchCartByUserId());
+  }, []);
 
+  let totalPrice = 0;
+  const navigate = useNavigate();
+  // if there is no add to cart navigate to usercart
+  useEffect(() => {
+    if (!filterdAddToCart.length) navigate(-1);
+  }, [cart]);
+  // Final Buy
   const changeSituationHandler = async () => {
-    filterdAddToCart.map(async (cart: CartType) => {
-      cart.situation = "BUY_PRODUCT";
+    if (rule) {
+      await dispatch(changeSituationCart(filterdAddToCart));
+      await dispatch(fetchCartByUserId());
+      toast.success("خریداری شد");
+      navigate(-1);
+    } else {
+      toast.error("مقررات را بررسی و تیک بزنید");
+    }
+  };
+  const incrementCartHandler = async (cartInfo: CartType) => {
+    await dispatch(increamentCart(cartInfo));
+    await dispatch(fetchCartByUserId());
+  };
+  const decrementCartHandler = async (cartInfo: CartType) => {
+    if (cartInfo.quantity === 1) {
+      await dispatch(deleteFromCart(cartInfo.id));
+      await dispatch(fetchCartByUserId());
+      toast.success(`${cartInfo.name} از سبد خرید حذف شد.`);
       console.log(cart);
-      await dispatch(changeSituationCart(cart));
-    });
-    toast.success("خریداری شد");
-    await navigate(-1);
+    } else {
+      await dispatch(decreamentCart(cartInfo));
+      await dispatch(fetchCartByUserId());
+    }
+  };
+  const deleteFromCartHandler = async (id: number, name: string) => {
+    await dispatch(deleteFromCart(id));
+    await dispatch(fetchCartByUserId());
+    toast.success(`${name} از سبد خرید حذف شد.`);
   };
 
   return (
@@ -30,16 +73,16 @@ function PaymentPage() {
       <div className="w-full  p-8 px-10 border rounded-lg flex flex-col gap-4">
         {/* product Detail */}
         {filterdAddToCart?.map((cart: CartType) => {
-          totalPrice = cart?.off
+          totalPrice += cart?.off
             ? (cart?.price - cart?.price * (cart?.off / 100)) * cart?.quantity
             : cart?.price * cart?.quantity;
+
           return (
             <div
               className="flex flex-col items-center justify-between gap-5 md:flex-row"
               key={cart?.id}
             >
               <div className="flex justify-between items-center w-full">
-                {" "}
                 <img
                   src={cart?.image}
                   alt="product-img"
@@ -54,23 +97,35 @@ function PaymentPage() {
                 <p>تومان</p>
               </div>
               <div className="flex justify-around items-center w-full">
-                {" "}
                 <div className="flex gap-2 items-center ">
-                  <button className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 ">
+                  <button
+                    className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 "
+                    onClick={(): void => {
+                      incrementCartHandler(cart);
+                    }}
+                  >
                     +
                   </button>
                   <input
                     type="text"
                     className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 w-1/6"
                     defaultValue={cart?.quantity}
+                    value={cart?.quantity}
                   />
 
-                  <button className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 ">
+                  <button
+                    className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 "
+                    onClick={(): void => {
+                      decrementCartHandler(cart);
+                    }}
+                  >
                     -
                   </button>
                 </div>
-                <div>
-                  <FontAwesomeIcon icon={faTrash} className="" />
+                <div
+                  onClick={() => deleteFromCartHandler(cart?.id, cart?.name)}
+                >
+                  <FontAwesomeIcon icon={faTrash} className=" cursor-pointer" />
                 </div>
               </div>
             </div>
@@ -98,7 +153,8 @@ function PaymentPage() {
           <input
             id="checkbox"
             type="checkbox"
-            value=""
+            checked={rule}
+            onChange={() => setRule(!rule)}
             className="w-4 h-4 text-primary-300 bg-primary-100 border-primary-300 rounded focus:ring-primary-300  focus:ring-2 "
           />{" "}
           <label htmlFor="checkbox" className="ml-2 text-sm font-medium">
