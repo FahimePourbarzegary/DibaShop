@@ -1,7 +1,17 @@
 import Layout from "../Layout/Layout";
 import React, { useState, useEffect, HtmlHTMLAttributes } from "react";
 import CardProduct from "../Components/CardProduct";
+import { RootState } from "../services/store";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { fetchProducts } from "../services/features/productSlice";
 function FilterPage() {
+  const { errorProducts, loadingProducts, products } = useAppSelector(
+    (state: RootState) => state.products
+  );
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+      dispatch(fetchProducts());
+    }, []);
   const [filteredProduct, setFilteredProduct] = useState([]);
   const [check, setCheck] = useState({
     Necklaces: false,
@@ -233,12 +243,13 @@ function FilterPage() {
             className=" w-full p-6 grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-3"
           >
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
+            {!errorProducts ? (
+              products.map((product) => {
+                return <CardProduct {...product} key={product.id} />;
+              })
+            ) : (
+              <div>بارگذاری با مشکل رو به رو شده</div>
+            )}
           </div>
         </section>
       </section>
