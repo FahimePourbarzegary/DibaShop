@@ -3,16 +3,16 @@ import React, { useState, useEffect, HtmlHTMLAttributes } from "react";
 import CardProduct from "../Components/CardProduct";
 import { RootState } from "../services/store";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { fetchProducts } from "../services/features/productSlice";
+import { fetchProducts, ProductType } from "../services/features/productSlice";
 function FilterPage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
   );
-    const dispatch = useAppDispatch();
-    useEffect(() => {
-      dispatch(fetchProducts());
-    }, []);
-  const [filteredProduct, setFilteredProduct] = useState([]);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, []);
+  const [filteredProduct, setFilteredProduct] = useState<ProductType[]>([]);
   const [check, setCheck] = useState({
     Necklaces: false,
     earrings: false,
@@ -36,7 +36,33 @@ function FilterPage() {
   const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newCheck = { ...check, [e.target.name]: e.target.checked };
     setCheck(newCheck);
+    console.log(newCheck);
   };
+  useEffect(() => {
+    let result;
+
+    //Filter By category
+    const filterByCategory = (array: ProductType[]) => {
+      return array.filter(
+        (c: ProductType) =>
+          (check.Necklaces && c.category === 2) ||
+          (check.earrings && c.category === 1) ||
+          (check.ring && c.category === 3) ||
+          (check.bracelet && c.category === 4) ||
+          (!check.Necklaces &&
+            !check.ring &&
+            !check.earrings &&
+            !check.bracelet)
+      );
+    };
+
+    if (!loadingProducts) {
+      result = [...products];
+      result = filterByCategory(result);
+      setFilteredProduct(result);
+    
+    }
+  }, [loadingProducts, products, check, price]);
   return (
     <Layout>
       {" "}
@@ -244,7 +270,7 @@ function FilterPage() {
         md:grid-cols-2 md:gap-8 xl:grid-cols-3"
           >
             {!errorProducts ? (
-              products.map((product) => {
+              filteredProduct.map((product: ProductType) => {
                 return <CardProduct {...product} key={product.id} />;
               })
             ) : (
