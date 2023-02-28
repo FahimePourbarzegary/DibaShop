@@ -24,7 +24,7 @@ function FilterPage() {
     steal: false,
     stealDesignGold: false,
   });
-  const [price, setPrice] = useState(1000000);
+  const [price, setPrice] = useState(340000);
   const [dragStarted, setDragStarted] = useState(false);
   const [dragging, setDragging] = useState(false);
   useEffect(() => {
@@ -72,10 +72,15 @@ function FilterPage() {
             !check.stealDesignGold)
       );
     };
+    //Filter By Price
+    const filterByPrice = (array: ProductType[]) => {
+      return array.filter((c: ProductType) => c.price <= price);
+    };
     if (!loadingProducts) {
       result = [...products];
       result = filterByCategory(result);
       result = filterByMaterial(result);
+      result = filterByPrice(result);
       setFilteredProduct(result);
     }
   }, [loadingProducts, products, check, price]);
@@ -261,7 +266,7 @@ function FilterPage() {
               id="price"
               type="range"
               min="1"
-              max="1000000"
+              max="340000"
               step="500"
               value={price}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
