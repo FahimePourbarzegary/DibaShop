@@ -56,11 +56,27 @@ function FilterPage() {
       );
     };
 
+    //Filter By Material
+    const filterByMaterial = (array: ProductType[]) => {
+      return array.filter(
+        (c: ProductType) =>
+          (check.gold && c.material === "طلا") ||
+          (check.brass && c.material === "برنجی") ||
+          (check.metal && c.material === "استیل") ||
+          (check.steal && c.material === "فلز") ||
+          (check.stealDesignGold && c.material === "استیل طرح طلا") ||
+          (!check.gold &&
+            !check.metal &&
+            !check.brass &&
+            !check.steal &&
+            !check.stealDesignGold)
+      );
+    };
     if (!loadingProducts) {
       result = [...products];
       result = filterByCategory(result);
+      result = filterByMaterial(result);
       setFilteredProduct(result);
-    
     }
   }, [loadingProducts, products, check, price]);
   return (
