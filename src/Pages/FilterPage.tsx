@@ -4,6 +4,7 @@ import CardProduct from "../Components/CardProduct";
 import { RootState } from "../services/store";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { fetchProducts, ProductType } from "../services/features/productSlice";
+import { useLocation, useParams } from "react-router-dom";
 function FilterPage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
@@ -12,6 +13,7 @@ function FilterPage() {
   useEffect(() => {
     dispatch(fetchProducts());
   }, []);
+  const { productName } = useParams();
   const [filteredProduct, setFilteredProduct] = useState<ProductType[]>([]);
   const [check, setCheck] = useState({
     Necklaces: false,
@@ -38,8 +40,23 @@ function FilterPage() {
     setCheck(newCheck);
     console.log(newCheck);
   };
+
   useEffect(() => {
     let result;
+
+    //Filter By name
+    const filterByName = (array: ProductType[]) => {
+      if (productName !== undefined) {
+        return array.filter((c) =>
+          c.name
+            .toString()
+            .toLowerCase()
+            .includes(productName.toString().toLowerCase())
+        );
+      } else {
+        return array;
+      }
+    };
 
     //Filter By category
     const filterByCategory = (array: ProductType[]) => {
@@ -78,12 +95,13 @@ function FilterPage() {
     };
     if (!loadingProducts) {
       result = [...products];
+      result = filterByName(result);
       result = filterByCategory(result);
       result = filterByMaterial(result);
       result = filterByPrice(result);
       setFilteredProduct(result);
     }
-  }, [loadingProducts, products, check, price]);
+  }, [loadingProducts, products, check, price, productName]);
   return (
     <Layout>
       {" "}

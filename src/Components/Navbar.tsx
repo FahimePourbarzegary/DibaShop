@@ -10,12 +10,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { autoLogin } from "../services/features/userSlice";
+import { useAppSelector } from "../hooks/hooks";
 import { RootState } from "../services/store";
 export const Navbar = () => {
   const [humbergNav, setHumbergNav] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>(" ");
   const [dropdownCate, setDropdownCate] = useState<string>(
     "overflow-hidden max-h-0 opacity-0"
   );
@@ -40,7 +39,7 @@ export const Navbar = () => {
       </div>
       {/* SearchBar section */}
       <div className=" w-full lg:w-1/4 border  flex justify-between px-6 py-1 rounded-2xl items-center  col-span-2  order-2 lg:order-1 md:col-span-2 md:rounded-3xl self-center md:mt-0 ">
-        <Link to="/Filter" /*state={{ productName: searchValue }}*/>
+        <Link to={`/Filter/${searchValue}`}>
           {" "}
           <FontAwesomeIcon icon={faFilter} className="cursor-pointer " />
         </Link>
@@ -52,7 +51,7 @@ export const Navbar = () => {
           className=" w-full  px-3 text-xs py-3 bg-dark focus:outline-none"
           placeholder="چیزی را جستجو کنید..."
         />
-        <Link to="/Filter" /*state={{ productName: searchValue }}*/>
+        <Link to={`/Filter/${searchValue}`}>
           {" "}
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
