@@ -9,7 +9,14 @@ import Comment from "../Components/Comment";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { RootState } from "../services/store";
 import { fetchProductById } from "../services/features/productSlice";
-import { addToCart } from "../services/features/cartSlider";
+import {
+  addToCart,
+  CartType,
+  decreamentCart,
+  deleteFromCart,
+  fetchCartByUserId,
+  increamentCart,
+} from "../services/features/cartSlider";
 import toast from "react-hot-toast";
 function DetailPage() {
   const navigate = useNavigate();
@@ -19,11 +26,28 @@ function DetailPage() {
   const { user, loggedIn, error } = useAppSelector(
     (state: RootState) => state.users
   );
+  const { errorCart, loadingCart, cart } = useAppSelector(
+    (state: RootState) => state.carts
+  );
   const dispatch = useAppDispatch();
   const { id } = useParams();
+
+  let filterCartByproductId: CartType[] = [];
+
   useEffect(() => {
-    dispatch(fetchProductById(id));
+    console.log(id);
+    if (id !== undefined) dispatch(fetchProductById(id));
+    dispatch(fetchCartByUserId());
   }, []);
+  if (cart && product.length) {
+    filterCartByproductId = cart.filter(
+      (cart) =>
+        cart.productId === product[0].id && cart.situation === "ADD_TO_CART"
+    );
+  }
+
+  console.log(filterCartByproductId);
+
   const addToCartHandler = async () => {
     const { id, name, price, off, image, detail, category } = product[0];
     if (user) {
@@ -47,10 +71,26 @@ function DetailPage() {
       toast.error(" ابتدا وارد حساب شوید");
     }
   };
+
+  const incrementCartHandler = async (cartInfo: CartType) => {
+    if (product[0].inventory === cartInfo.quantity) {
+      toast.error(`فقط ${product[0].inventory}عدد در انبار موجود است.`);
+    } else {
+      await dispatch(increamentCart(cartInfo));
+    }
+  };
+  const decrementCartHandler = async (cartInfo: CartType) => {
+    if (cartInfo.quantity === 1) {
+      await dispatch(deleteFromCart(cartInfo.id));
+      toast.success(`${cartInfo.name} از سبد خرید حذف شد.`);
+      console.log(cart);
+    } else {
+      await dispatch(decreamentCart(cartInfo));
+    }
+  };
   if (errorProducts) return <div>error</div>;
   if (loadingProducts) return <div>loadingProducts</div>;
-  console.log(product);
-
+  if (loadingCart) return <div>Loading ....</div>;
   return (
     <Layout>
       <section className=" p-6 flex flex-col justify-evenly items-center my-3">
@@ -136,7 +176,7 @@ function DetailPage() {
             </div>
             <div className="flex justify-between items-center">
               <div>
-                <div className="flex font-bold text-yellow-300">
+                <div className="flex font-bold text-yellow-300 w-full">
                   <p>
                     {product[0]?.off
                       ? product[0]?.price -
@@ -151,9 +191,38 @@ function DetailPage() {
               </div>
 
               {product[0]?.inventory ? (
-                <div onClick={addToCartHandler}>
-                  <Button title="خرید" />
-                </div>
+                filterCartByproductId.length ? (
+                  <div className="">
+                    <div className="flex gap-2 ">
+                      <button
+                        className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 "
+                        onClick={(): void => {
+                          incrementCartHandler(filterCartByproductId[0]);
+                        }}
+                      >
+                        +
+                      </button>
+                      <input
+                        type="text"
+                        className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 w-1/6"
+                        defaultValue={filterCartByproductId[0].quantity}
+                        value={filterCartByproductId[0].quantity}
+                      />
+                      <button
+                        className=" text-center  p-1 px-3 rounded-md cursor-pointer bg-primary-100 text-lg  font-vazirBold text-dark hover:bg-primary-300 "
+                        onClick={(): void => {
+                          decrementCartHandler(filterCartByproductId[0]);
+                        }}
+                      >
+                        -
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div onClick={addToCartHandler}>
+                    <Button title="خرید" />
+                  </div>
+                )
               ) : (
                 <div>نا موجود</div>
               )}

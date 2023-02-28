@@ -27,11 +27,6 @@ export const Navbar = () => {
   const handleClickSubNav = () => {
     setHumbergNav(!humbergNav);
   };
-
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(autoLogin());
-  }, []);
   useEffect(() => {
     if (loggedIn) setIsUser(true);
     else setIsUser(false);

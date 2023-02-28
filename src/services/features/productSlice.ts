@@ -50,13 +50,18 @@ export const fetchProductById = createAsyncThunk(
     }
   }
 );
+type decrementProps = {
+  productId: number;
+  quantity: number;
+};
 export const decrementInventory = createAsyncThunk(
   "products/decrementInventory",
-  async (productInfo: ProductType, { rejectWithValue }) => {
+  async ({ productId, quantity }: decrementProps, { rejectWithValue }) => {
     try {
-      const response = await http.put(`products/${productInfo.id}`, {
-        ...productInfo,
-        inventory: productInfo.inventory - 1,
+      const { data } = await http.get(`products/${productId}`);
+      const response = await http.put(`products/${data.id}`, {
+        ...data,
+        inventory: data.inventory - quantity,
       });
       return response.data;
     } catch ({ message }) {
@@ -122,6 +127,7 @@ export const productSlice = createSlice({
         loadingProducts: false,
         errorProducts: "",
         products: filteredProduct,
+        product: [],
       };
     });
     builder.addCase(decrementInventory.pending, (state, action) => {

@@ -2,7 +2,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../Components/Button";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import {
@@ -13,9 +13,16 @@ import {
   increamentCart,
   deleteFromCart,
 } from "../services/features/cartSlider";
+import {
+  decrementInventory,
+  fetchProductById,
+} from "../services/features/productSlice";
 import { RootState } from "../services/store";
 
 function PaymentPage() {
+  const { errorProducts, loadingProducts, product } = useAppSelector(
+    (state: RootState) => state.products
+  );
   const { errorCart, loadingCart, cart } = useAppSelector(
     (state: RootState) => state.carts
   );
@@ -28,7 +35,6 @@ function PaymentPage() {
   useEffect(() => {
     dispatch(fetchCartByUserId());
   }, []);
-
   let totalPrice = 0;
   const navigate = useNavigate();
   // if there is no add to cart navigate to usercart
@@ -39,7 +45,15 @@ function PaymentPage() {
   const changeSituationHandler = async () => {
     if (rule) {
       await dispatch(changeSituationCart(filterdAddToCart));
-      await dispatch(fetchCartByUserId());
+      filterdAddToCart.map(async (productCart) => {
+        await dispatch(
+          decrementInventory({
+            productId: productCart.productId,
+            quantity: productCart.quantity,
+          })
+        );
+      });
+
       toast.success("خریداری شد");
       navigate(-1);
     } else {
@@ -47,26 +61,27 @@ function PaymentPage() {
     }
   };
   const incrementCartHandler = async (cartInfo: CartType) => {
-    await dispatch(increamentCart(cartInfo));
-    await dispatch(fetchCartByUserId());
+    dispatch(fetchProductById(String(cartInfo.productId)));
+    if (product[0].inventory === cartInfo.quantity) {
+      toast.error(`فقط ${product[0].inventory}عدد در انبار موجود است.`);
+    } else {
+      await dispatch(increamentCart(cartInfo));
+    }
   };
   const decrementCartHandler = async (cartInfo: CartType) => {
     if (cartInfo.quantity === 1) {
       await dispatch(deleteFromCart(cartInfo.id));
-      await dispatch(fetchCartByUserId());
       toast.success(`${cartInfo.name} از سبد خرید حذف شد.`);
       console.log(cart);
     } else {
       await dispatch(decreamentCart(cartInfo));
-      await dispatch(fetchCartByUserId());
     }
   };
   const deleteFromCartHandler = async (id: number, name: string) => {
     await dispatch(deleteFromCart(id));
-    await dispatch(fetchCartByUserId());
     toast.success(`${name} از سبد خرید حذف شد.`);
   };
-
+  if (loadingProducts) return <div>Loading ....</div>;
   return (
     <div className=" w-full  flex flex-col  justify-center items-center p-10">
       {/* BuyBox section */}
