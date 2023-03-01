@@ -2,14 +2,13 @@ import {
   faBars,
   faBell,
   faFilter,
-  faGear,
   faHeart,
   faMagnifyingGlass,
   faShoppingBag,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../hooks/hooks";
 import { RootState } from "../services/store";
 export const Navbar = () => {
@@ -18,6 +17,7 @@ export const Navbar = () => {
   const [dropdownCate, setDropdownCate] = useState<string>(
     "overflow-hidden max-h-0 opacity-0"
   );
+  const navigate = useNavigate();
   const { user, loggedIn, error } = useAppSelector(
     (state: RootState) => state.users
   );
@@ -25,6 +25,11 @@ export const Navbar = () => {
   //toggle subnav
   const handleClickSubNav = () => {
     setHumbergNav(!humbergNav);
+  };
+  const handleEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      navigate(`/Filter/${searchValue}`);
+    }
   };
   useEffect(() => {
     if (loggedIn) setIsUser(true);
@@ -48,6 +53,9 @@ export const Navbar = () => {
           name="search"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value.trim())}
+          onKeyDown={(e) => {
+            handleEnter(e);
+          }}
           className=" w-full  px-3 text-xs py-3 bg-dark focus:outline-none"
           placeholder="چیزی را جستجو کنید..."
         />
