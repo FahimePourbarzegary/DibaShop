@@ -8,12 +8,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../hooks/hooks";
 import { RootState } from "../services/store";
 export const Navbar = () => {
+  const { productName } = useParams();
   const [humbergNav, setHumbergNav] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>(" ");
+  const [searchValue, setSearchValue] = useState<string>(
+    productName !== undefined ? productName : ""
+  );
+  useEffect(() => {
+    setSearchValue(productName !== undefined ? productName : "");
+  }, [productName]);
+
   const [dropdownCate, setDropdownCate] = useState<string>(
     "overflow-hidden max-h-0 opacity-0"
   );
@@ -31,11 +38,33 @@ export const Navbar = () => {
       navigate(`/Filter/${searchValue}`);
     }
   };
+
   useEffect(() => {
     if (loggedIn) setIsUser(true);
     else setIsUser(false);
   }, [user]);
-
+  const categoryData = [
+    {
+      title: "گوشواره",
+      link: `/Filter/گوشواره`,
+      image: "https://iili.io/HayBUmX.jpg",
+    },
+    {
+      title: "گردنبند",
+      link: `/Filter/گردنبند`,
+      image: "https://iili.io/Hahlbd7.png",
+    },
+    {
+      title: "دستبند",
+      link: `/Filter/دستبند`,
+      image: "https://iili.io/HayBl0Q.jpg",
+    },
+    {
+      title: "انگشتر",
+      link: `/Filter/انگشتر`,
+      image: "https://iili.io/HayBYsj.jpg",
+    },
+  ];
   return (
     <nav className=" flex justify-between items-center flex-wrap ">
       {/*Logo section */}
@@ -107,21 +136,15 @@ export const Navbar = () => {
               className={`z-10  font-normal bg-dark divide-y divide-gray-100 rounded shadow w-44 absolute top-30 md:top-16 ${dropdownCate}  duration-500`}
             >
               <ul className="p-1 py-2  text-primary-200">
-                <li className="block px-4 py-2 rounded  hover:bg-primary-200 hover:text-dark ">
-                  <NavLink to="/" className="w-full block">
-                    گردنبند
-                  </NavLink>
-                </li>
-                <li className="block px-4 py-2  rounded  hover:bg-primary-200 hover:text-dark ">
-                  <NavLink to="/" className="w-full block">
-                    گوشواره
-                  </NavLink>
-                </li>
-                <li className="block px-4 py-2  rounded  hover:bg-primary-200 hover:text-dark ">
-                  <NavLink to="/" className="w-full block">
-                    ست
-                  </NavLink>
-                </li>
+                {categoryData.map((category,index) => {
+                  return (
+                    <li className="block px-4 py-2 rounded  hover:bg-primary-200 hover:text-dark " key={index}>
+                      <NavLink to={category.link} className="w-full block">
+                        {category.title}
+                      </NavLink>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </li>

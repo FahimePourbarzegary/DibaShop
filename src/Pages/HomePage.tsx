@@ -64,12 +64,13 @@ function HomePage() {
           className=" w-full grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-4"
         >
-          {categoryData.map((category) => {
+          {categoryData.map((category, index) => {
             return (
               <Category
                 title={category.title}
                 link={category.link}
                 image={category.image}
+                key={index}
               />
             );
           })}
