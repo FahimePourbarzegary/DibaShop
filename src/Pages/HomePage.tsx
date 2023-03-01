@@ -15,6 +15,28 @@ function HomePage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
   );
+  const categoryData = [
+    {
+      title: "گوشواره",
+      link: `/Filter/گوشواره`,
+      image: "https://iili.io/HayBUmX.jpg",
+    },
+    {
+      title: "گردنبند",
+      link: `/Filter/گردنبند`,
+      image: "https://iili.io/Hahlbd7.png",
+    },
+    {
+      title: "دستبند",
+      link: `/Filter/دستبند`,
+      image: "https://iili.io/HayBl0Q.jpg",
+    },
+    {
+      title: "انگشتر",
+      link: `/Filter/انگشتر`,
+      image: "https://iili.io/HayBYsj.jpg",
+    },
+  ];
   const { loadingBlogs, errorBlogs, blogs } = useAppSelector(
     (state: RootState) => state.blogs
   );
@@ -42,10 +64,15 @@ function HomePage() {
           className=" w-full grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-4"
         >
-          <Category />
-          <Category />
-          <Category />
-          <Category />
+          {categoryData.map((category) => {
+            return (
+              <Category
+                title={category.title}
+                link={category.link}
+                image={category.image}
+              />
+            );
+          })}
         </section>
       </section>
       {/* Products Box */}
