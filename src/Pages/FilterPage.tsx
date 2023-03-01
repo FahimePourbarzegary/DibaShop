@@ -79,8 +79,8 @@ function FilterPage() {
         (c: ProductType) =>
           (check.gold && c.material === "طلا") ||
           (check.brass && c.material === "برنجی") ||
-          (check.metal && c.material === "استیل") ||
-          (check.steal && c.material === "فلز") ||
+          (check.metal && c.material === "فلز") ||
+          (check.steal && c.material === "استیل") ||
           (check.stealDesignGold && c.material === "استیل طرح طلا") ||
           (!check.gold &&
             !check.metal &&
