@@ -3,12 +3,14 @@ import productReducer from "./features/productSlice";
 import blogReducer from "./features/blogSlice";
 import userReducer from "./features/userSlice";
 import cartReducer from "./features/cartSlider";
+import favoritesReducer from "./features/favoriteSlice";
 export const store = configureStore({
   reducer: {
     products: productReducer,
     blogs: blogReducer,
     users: userReducer,
     carts: cartReducer,
+    favorites: favoritesReducer,
   },
 });
 

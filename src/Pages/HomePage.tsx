@@ -11,6 +11,7 @@ import { fetchBlog } from "../services/features/blogSlice";
 import { RootState } from "../services/store";
 import { Link } from "react-router-dom";
 import { autoLogin } from "../services/features/userSlice";
+import { fetchFavoriteByUserId } from "../services/features/favoriteSlice";
 function HomePage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
@@ -40,12 +41,17 @@ function HomePage() {
   const { loadingBlogs, errorBlogs, blogs } = useAppSelector(
     (state: RootState) => state.blogs
   );
+  const { errorFavorite, loadingFavorite, favoriteByUserId } = useAppSelector(
+    (state: RootState) => state.favorites
+  );
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(autoLogin());
+    dispatch(fetchFavoriteByUserId());
     dispatch(fetchProducts());
     dispatch(fetchBlog());
   }, []);
+  console.log(favoriteByUserId);
 
   return (
     <Layout>
@@ -92,7 +98,16 @@ function HomePage() {
         >
           {!errorProducts ? (
             products.map((product) => {
-              return <CardProduct {...product} key={product.id} />;
+              const filteredFavorite = favoriteByUserId?.filter(
+                (favorite) => favorite.productId === product.id
+              );
+              return (
+                <CardProduct
+                  {...product}
+                  key={product.id}
+                  favorite={filteredFavorite?.length ? true : false}
+                />
+              );
             })
           ) : (
             <div>بارگذاری با مشکل رو به رو شده</div>

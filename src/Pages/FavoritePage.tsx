@@ -1,16 +1,18 @@
 import { useEffect } from "react";
-import CardProduct from "../Components/CardProduct";
+import CardFavoriteProduct from "../Components/CardFavoriteProduct";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { fetchProducts } from "../services/features/productSlice";
+import { fetchFavoriteByUserId } from "../services/features/favoriteSlice";
 import { RootState } from "../services/store";
 function FavoritePage() {
-  const { errorProducts, loadingProducts, products } = useAppSelector(
-    (state: RootState) => state.products
+  const { errorFavorite, loadingFavorite, favoriteByUserId } = useAppSelector(
+    (state: RootState) => state.favorites
   );
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchFavoriteByUserId());
   }, []);
+  console.log(favoriteByUserId);
+
   return (
     <section className="py-4 w-full">
       <p className=" pr-8  md:pr-18 font-semibold text-slate-600 text-base md:text-xl">
@@ -20,9 +22,9 @@ function FavoritePage() {
         className="p-6 grid gap-5
         md:grid-cols-2 md:gap-8 xl:grid-cols-3"
       >
-        {!errorProducts ? (
-          products.map((product) => {
-            return <CardProduct {...product} key={product.id} />;
+        {!errorFavorite ? (
+          favoriteByUserId?.map((product) => {
+            return <CardFavoriteProduct {...product} key={product.id} />;
           })
         ) : (
           <div>بارگذاری با مشکل رو به رو شده</div>
