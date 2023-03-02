@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import {
+  addToFavorite,
   deleteFromFavorite,
   FavoriteType,
 } from "../services/features/favoriteSlice";
@@ -18,7 +19,9 @@ type CardProductProps = {
   off: number;
   image: string;
   material: string;
-  favorite: FavoriteType[] | undefined;
+  category: number;
+  detail: string;
+  favorites: FavoriteType[] | null;
 };
 function CardProduct({
   id,
@@ -27,10 +30,19 @@ function CardProduct({
   off,
   image,
   material,
-  favorite,
+  category,
+  detail,
+  favorites,
 }: CardProductProps) {
-  const [favoriteSign, setFavoriteSign] = useState(favorite);
-  console.log(favoriteSign, name);
+  const { user, loggedIn, error } = useAppSelector(
+    (state: RootState) => state.users
+  );
+  const filteredFavorite = favorites?.filter((favorite) =>
+    favorite.productId === id ? favorite : null
+  );
+  const [favoriteSign, setFavoriteSign] = useState(filteredFavorite);
+  console.log(filteredFavorite);
+
   const dispatch = useAppDispatch();
   return (
     <div className="flex justify-center items-center">
@@ -51,10 +63,29 @@ function CardProduct({
                 icon={faHeart}
                 className={favoriteSign?.length ? "text-rose-700" : ""}
                 onClick={() => {
-                  if (favoriteSign?.length && favoriteSign !== undefined) {
-                    dispatch(deleteFromFavorite(favoriteSign[0].id));
-                    toast.success(`${name} از علاقمندی ها حذف شد . `);
-                    setFavoriteSign([]);
+                  if (user && loggedIn) {
+                    if (favoriteSign?.length && favoriteSign !== undefined) {
+                      dispatch(deleteFromFavorite(favoriteSign[0].id));
+                      toast.success(`${name} از علاقمندی ها حذف شد . `);
+                      setFavoriteSign([]);
+                    } else if (favoriteSign !== undefined) {
+                      const data = {
+                        id: new Date().getTime(),
+                        productId: id,
+                        userId: user.id,
+                        name,
+                        price,
+                        off,
+                        image,
+                        category,
+                        detail,
+                      };
+                      dispatch(addToFavorite(data));
+                      toast.success(`${name} به علاقمندی ها اضافه شد.`);
+                      setFavoriteSign([data]);
+                    }
+                  } else {
+                    toast.error(" ابتدا وارد حساب کاربری شوید");
                   }
                 }}
               />

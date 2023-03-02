@@ -116,6 +116,23 @@ const favoriteSlice = createSlice({
         errorFavorite: action.payload,
       };
     });
+    builder.addCase(addToFavorite.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loadingFavorite: false,
+        favoriteByUserId: state.favoriteByUserId
+          ? [...state.favoriteByUserId, action.payload]
+          : [action.payload],
+        errorFavorite: null,
+      };
+    });
+    builder.addCase(addToFavorite.rejected, (state, action) => {
+      return {
+        ...state,
+        loadingFavorite: false,
+        errorFavorite: action.payload,
+      };
+    });
   },
 });
 

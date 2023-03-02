@@ -98,14 +98,11 @@ function HomePage() {
         >
           {!errorProducts ? (
             products.map((product) => {
-              const filteredFavorite = favoriteByUserId?.filter(
-                (favorite) => favorite.productId === product.id
-              );
               return (
                 <CardProduct
                   {...product}
                   key={product.id}
-                  favorite={filteredFavorite}
+                  favorites={favoriteByUserId}
                 />
               );
             })
