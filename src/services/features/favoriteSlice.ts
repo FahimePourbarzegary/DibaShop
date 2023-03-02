@@ -46,7 +46,28 @@ export const fetchFavoriteByUserId = createAsyncThunk(
     }
   }
 );
-
+export const addToFavorite = createAsyncThunk(
+  "favorite/addTofavorite",
+  async (favorite: FavoriteType, { rejectWithValue }) => {
+    try {
+      const response = await http.post(`favorites`, favorite);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const deleteFromFavorite = createAsyncThunk(
+  "favorite/deleteFromFavorite",
+  async (favoriteId: number, { rejectWithValue }) => {
+    try {
+      await http.delete(`favorites/${favoriteId}`);
+      return favoriteId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 //Slice
 const favoriteSlice = createSlice({
   name: "favorite",
@@ -69,6 +90,29 @@ const favoriteSlice = createSlice({
         ...state,
         loadingFavorite: false,
         favoriteByUserId: null,
+        errorFavorite: action.payload,
+      };
+    });
+    builder.addCase(deleteFromFavorite.pending, (state, action) => {
+      return { ...state, loadingFavorite: true };
+    });
+    builder.addCase(deleteFromFavorite.fulfilled, (state, action) => {
+      const filteredCartProduct = state.favoriteByUserId
+        ? state.favoriteByUserId.filter(
+            (product) => product.id !== action.payload
+          )
+        : null;
+      return {
+        ...state,
+        loadingFavorite: false,
+        favoriteByUserId: filteredCartProduct,
+        errorFavorite: null,
+      };
+    });
+    builder.addCase(deleteFromFavorite.rejected, (state, action) => {
+      return {
+        ...state,
+        loadingFavorite: false,
         errorFavorite: action.payload,
       };
     });

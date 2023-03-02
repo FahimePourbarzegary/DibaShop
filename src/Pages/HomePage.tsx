@@ -105,7 +105,7 @@ function HomePage() {
                 <CardProduct
                   {...product}
                   key={product.id}
-                  favorite={filteredFavorite?.length ? true : false}
+                  favorite={filteredFavorite}
                 />
               );
             })

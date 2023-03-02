@@ -1,7 +1,10 @@
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { useAppDispatch } from "../hooks/hooks";
 import {
+  deleteFromFavorite,
   FavoriteType,
 } from "../services/features/favoriteSlice";
 import Button from "./Button";
@@ -13,6 +16,7 @@ function CardFavoriteProduct({
   off,
   image,
 }: FavoriteType) {
+  const dispatch = useAppDispatch();
   return (
     <div className="flex justify-center items-center">
       <div className=" p-4 w-72 bg-dark rounded-xl flex flex-col justify-between gap-3  text-primary-100   border border-primary-100 ">
@@ -29,7 +33,8 @@ function CardFavoriteProduct({
                 icon={faHeart}
                 className={"text-rose-700"}
                 onClick={() => {
-                  console.log("hii");
+                  dispatch(deleteFromFavorite(id));
+                  toast.success(`${name} از علاقمندی ها حذف شد . `);
                 }}
               />
             </button>

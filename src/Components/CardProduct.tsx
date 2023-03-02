@@ -1,8 +1,13 @@
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import {
+  deleteFromFavorite,
+  FavoriteType,
+} from "../services/features/favoriteSlice";
 import { ProductType } from "../services/features/productSlice";
 import { RootState } from "../services/store";
 import Button from "./Button";
@@ -13,7 +18,7 @@ type CardProductProps = {
   off: number;
   image: string;
   material: string;
-  favorite: boolean;
+  favorite: FavoriteType[] | undefined;
 };
 function CardProduct({
   id,
@@ -26,7 +31,7 @@ function CardProduct({
 }: CardProductProps) {
   const [favoriteSign, setFavoriteSign] = useState(favorite);
   console.log(favoriteSign, name);
-
+  const dispatch = useAppDispatch();
   return (
     <div className="flex justify-center items-center">
       <div className=" p-4 w-72 bg-dark rounded-xl flex flex-col justify-between gap-3  text-primary-100   border border-primary-100 ">
@@ -44,7 +49,14 @@ function CardProduct({
             <button>
               <FontAwesomeIcon
                 icon={faHeart}
-                className={favoriteSign ? "text-rose-700" : ""}
+                className={favoriteSign?.length ? "text-rose-700" : ""}
+                onClick={() => {
+                  if (favoriteSign?.length && favoriteSign !== undefined) {
+                    dispatch(deleteFromFavorite(favoriteSign[0].id));
+                    toast.success(`${name} از علاقمندی ها حذف شد . `);
+                    setFavoriteSign([]);
+                  }
+                }}
               />
             </button>
           </div>
