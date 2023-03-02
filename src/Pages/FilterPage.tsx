@@ -9,6 +9,9 @@ function FilterPage() {
   const { errorProducts, loadingProducts, products } = useAppSelector(
     (state: RootState) => state.products
   );
+  const { errorFavorite, loadingFavorite, favoriteByUserId } = useAppSelector(
+    (state: RootState) => state.favorites
+  );
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchProducts());
@@ -310,7 +313,13 @@ function FilterPage() {
           >
             {!errorProducts ? (
               filteredProduct.map((product: ProductType) => {
-                return <CardProduct {...product} key={product.id} />;
+                return (
+                  <CardProduct
+                    {...product}
+                    key={product.id}
+                    favorites={favoriteByUserId}
+                  />
+                );
               })
             ) : (
               <div>بارگذاری با مشکل رو به رو شده</div>
